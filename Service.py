@@ -327,6 +327,11 @@ header {visibility: hidden;}
   justify-content:center;
 }
 
+/* Añadir cursor pointer para servicios clicables */
+.ms-card--service {
+    cursor: pointer;
+}
+
 .ms-icon {
   font-size: 44px;
   filter: drop-shadow(0 12px 18px rgba(0,0,0,0.35));
@@ -428,12 +433,11 @@ def render_card(title: str, desc: str, img_url: str, variant: str = "") -> None:
     )
 
 
-def render_service_card(icon: str, title: str, desc: str) -> None:
+def render_service_card(icon: str, title: str, desc: str, link: str = None) -> None:
     safe_title = html.escape(title)
     safe_desc = html.escape(desc)
 
-    st.markdown(
-        f"""
+    card_html = f"""
         <div class="ms-card ms-card--service">
           <div class="ms-card__media"><div class="ms-icon">{html.escape(icon)}</div></div>
           <div class="ms-card__body">
@@ -441,9 +445,12 @@ def render_service_card(icon: str, title: str, desc: str) -> None:
             <div class="ms-card__desc">{safe_desc}</div>
           </div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """
+
+    if link:
+        st.markdown(f'<a href="{link}" target="_blank" style="text-decoration: none; color: inherit;">{card_html}</a>', unsafe_allow_html=True)
+    else:
+        st.markdown(card_html, unsafe_allow_html=True)
 
 
 # ==========================================================
@@ -454,9 +461,6 @@ render_hero()
 st.markdown("<div class='section-spacer'></div>", unsafe_allow_html=True)
 st.markdown("<div class='section-title'>📱 Contacto directo</div>", unsafe_allow_html=True)
 
-# -------------------------------------------------------------
-# MODIFICACIÓN: Solo WhatsApp y Ubicación mantenidos
-# -------------------------------------------------------------
 c1, c2 = st.columns(2, gap="small")
 
 with c1:
@@ -478,7 +482,7 @@ with c2:
 st.divider()
 
 # Navegación por secciones
-TAB_INICIO, TAB_SERV, TAB_PORT, TAB_CONT = st.tabs(["🏠 Inicio", "🧰 Servicios", "🔧 Portafolio", "📞 Contacto"])
+TAB_INICIO, TAB_SERV, TAB_PORT = st.tabs(["🏠 Inicio", "🧰 Servicios", "🔧 Portafolio"])
 
 with TAB_INICIO:
     st.markdown("<div class='section-title'>¿Qué hacemos?</div>", unsafe_allow_html=True)
@@ -491,60 +495,33 @@ with TAB_INICIO:
     with a:
         render_service_card("⚡", "Diagnóstico preciso", "Evaluación técnica y propuesta de solución con claridad.")
     with b:
-        render_service_card("🔬", "Micro-soldadura", "Reparación de placas, conectores y componentes SMD.")
+        render_service_card("🔬", "Micro-soldadura", "Reparación de placas, conectoras y componentes SMD.")
     with c:
         render_service_card("🧩", "Reballing", "Reparación avanzada en equipos que lo requieren (según caso).")
 
 with TAB_SERV:
     st.markdown("<div class='section-title'>Servicios</div>", unsafe_allow_html=True)
+    
+    wa_direct = "https://wa.me/595961843932"
 
     s1, s2, s3 = st.columns(3, gap="large")
     with s1:
-        render_service_card(
-            "📺",
-            "TV y monitores",
-            "Backlight, fuentes, mainboard, reparación de imagen/encendido (según diagnóstico).",
-        )
+        render_service_card("📺", "TV y monitores", "Backlight, fuentes, mainboard...", link=wa_direct)
     with s2:
-        render_service_card(
-            "🎮",
-            "Consolas",
-            "Reparación HDMI, puertos, limpieza y mantenimiento, fallas de encendido (según caso).",
-        )
+        render_service_card("🎮", "Consolas", "Reparación HDMI, puertos, limpieza...", link=wa_direct)
     with s3:
-        render_service_card(
-            "💻",
-            "Equipos electrónicos",
-            "Mantenimiento, reparación de placas y corrección de fallas eléctricas/electrónicas.",
-        )
+        render_service_card("💻", "Equipos electrónicos", "Mantenimiento y reparación de placas...", link=wa_direct)
 
-    st.info("💡 Consejo: si tenés fotos del equipo y del problema, agiliza el diagnóstico.")
+    st.info("💡 Consejo: al hacer clic en un servicio, podrás consultarnos directamente por WhatsApp.")
 
 with TAB_PORT:
     st.markdown("<div class='section-title'>Portafolio de reparaciones</div>", unsafe_allow_html=True)
-    st.caption("Ejemplos ilustrativos.")
-
+    
     trabajos = [
-        {
-            "titulo": "Samsung 4K – Sin imagen",
-            "desc": "Diagnóstico: LEDs dañados. Solución: reemplazo de backlight y ajuste de voltajes.",
-            "img": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&q=80&w=1200",
-        },
-        {
-            "titulo": "Mantenimiento PC Gamer",
-            "desc": "Limpieza, cambio de pasta térmica y optimización general del equipo.",
-            "img": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=1200",
-        },
-        {
-            "titulo": "iPhone – No carga",
-            "desc": "Micro-soldadura: reparación en circuito de carga y restauración de pistas (según caso).",
-            "img": "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?auto=format&fit=crop&q=80&w=1200",
-        },
-        {
-            "titulo": "PS5 – Puerto HDMI",
-            "desc": "Reemplazo de puerto HDMI con soldadura de precisión y verificación de señal.",
-            "img": "https://images.unsplash.com/photo-1605901309584-818e25960b8f?auto=format&fit=crop&q=80&w=1200",
-        },
+        {"titulo": "Samsung 4K", "desc": "Cambio de backlight.", "img": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&q=80&w=1200"},
+        {"titulo": "Mantenimiento PC", "desc": "Limpieza y pasta térmica.", "img": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=1200"},
+        {"titulo": "iPhone", "desc": "Micro-soldadura de carga.", "img": "https://images.unsplash.com/photo-1511385348-a52b4a160dc2?auto=format&fit=crop&q=80&w=1200"},
+        {"titulo": "PS5", "desc": "Puerto HDMI nuevo.", "img": "https://images.unsplash.com/photo-1605901309584-818e25960b8f?auto=format&fit=crop&q=80&w=1200"},
     ]
 
     cols = st.columns(2, gap="large")
@@ -552,58 +529,39 @@ with TAB_PORT:
         with cols[idx % 2]:
             render_card(t["titulo"], t["desc"], t["img"])
 
-with TAB_CONT:
-    st.markdown("<div class='section-title'>Contacto</div>", unsafe_allow_html=True)
+# ==========================================================
+# CONTACTO SIEMPRE VISIBLE (AL FINAL)
+# ==========================================================
+st.divider()
+st.markdown("<div class='section-title'>📞 Contacto</div>", unsafe_allow_html=True)
 
-    c_left, c_right = st.columns([1.1, 1], gap="large")
+c_left, c_right = st.columns([1.1, 1], gap="large")
 
-    with c_left:
-        st.markdown("#### 📩 Enviar consulta por WhatsApp")
-        st.caption("¿Tienes un equipo dañado? Cuéntanos qué le pasa.")
+with c_left:
+    st.markdown("#### 📩 Enviar consulta por WhatsApp")
+    with st.form("contact_form", clear_on_submit=False):
+        nombre = st.text_input("Nombre")
+        equipo = st.text_input("Equipo / Modelo")
+        problema = st.text_area("Describe el problema", height=120)
+        submit = st.form_submit_button("Generar mensaje")
 
-        with st.form("contact_form", clear_on_submit=False):
-            nombre = st.text_input("Nombre")
-            telefono = st.text_input("Teléfono (opcional)")
-            equipo = st.text_input("Equipo / Modelo")
-            problema = st.text_area("Describe el problema", height=120)
-            submit = st.form_submit_button("Generar mensaje")
+    if submit:
+        msg = f"¡Hola! Soy {nombre or '(sin nombre)'}, soporte para: {equipo or '(sin equipo)'}. Problema: {problema or '(sin descripción)'}"
+        wa_url = f"https://wa.me/+595961843932?text={quote(msg)}"
+        st.success("Mensaje preparado.")
+        st.link_button("💬 Abrir WhatsApp", wa_url, use_container_width=True)
 
-        if submit:
-            nombre = nombre.strip() or "(sin nombre)"
-            equipo = equipo.strip() or "(sin equipo/modelo)"
-            problema = problema.strip() or "(sin descripción)"
-
-            msg = (
-                f"¡Hola! Soy {nombre}, me gustaría solicitar soporte para mi equipo.\n\n"
-                f" Teléfono de contacto: {telefono.strip()}\n"
-                f" Equipo/Modelo: {equipo}\n"
-                f" Descripción del problema: {problema}\n\n"
-                 "Muchas Gracias"
-            )
-            wa_url = f"https://wa.me/+595961843932?text={quote(msg)}"
-
-            st.success("Mensaje preparado. Abrilo en WhatsApp:")
-            st.link_button("💬 Abrir WhatsApp con mensaje", wa_url, use_container_width=True)
-
-    with c_right:
-        st.markdown("#### 📍 Ubicación")
-        st.caption("Mapa para referencia.")
-
-        map_url = "https://www.google.com/maps?q=Dr.%20Emiliano%20Paiva%202056%2C%20Asunci%C3%B3n&output=embed"
-        components.iframe(map_url, height=360)
-
-        st.markdown("#### 📞 Datos")
-        st.write("**Dirección:** Dr. Emiliano Paiva 2056, Asunción")
-        st.write("**Teléfono:** +595 0961 843932")
-        st.write("**Horario:** Lun a Vie 08:30 – 19:00")
+with c_right:
+    st.markdown("#### 📍 Ubicación y Datos")
+    components.iframe("https://www.google.com/maps?q=Dr.%20Emiliano%20Paiva%202056%2C%20Asunci%C3%B3n&output=embed", height=280)
+    
+    st.markdown(f"""
+    <div class="info-card">
+        <div class="info-row"><span class="info-ico">🏢</span><span>Dr. Emiliano Paiva 2056, Asunción</span></div>
+        <div class="info-row"><span class="info-ico">📞</span><span>+595 0961 843932</span></div>
+        <div class="info-row"><span class="info-ico">⏰</span><span>Lun a Vie 08:30 – 19:00</span></div>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.divider()
-
-st.markdown(
-    """
-    <div style='text-align: center; color: rgba(245,247,255,0.65); padding: 14px 0;'>
-      <small>Todos los derechos reservados © 2026 Maxi Service Paraguay </small>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+st.markdown("<div style='text-align: center; color: rgba(245,247,255,0.65); padding: 14px 0;'><small>Todos los derechos reservados © 2026 Maxi Service Paraguay</small></div>", unsafe_allow_html=True)
